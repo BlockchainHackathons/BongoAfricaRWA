@@ -19,8 +19,7 @@ app.use(cors());
 app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
-app.get("/httpsms", async (req, res) => {
-  console.log("IN");
+app.post("/httpsms", async (req, res) => {
   const payload: PayloadHttpSms = req.body;
   const phoneNumber = payload.data.contact;
   const contentMsg = payload.data.content;
