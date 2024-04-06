@@ -1,6 +1,6 @@
 import crypto from "crypto";
 import { EncryptedData, User } from "../types/global.type";
-import { createWallet } from "./ethers.helper";
+import { createWallet, faucet } from "./ethers.helper";
 import { getUser, insertNewUser } from "./supabase.helper";
 import { secretKey } from "../clients/ethers.client";
 
@@ -41,6 +41,7 @@ export const createUser = (phoneNumber: string) => {
     encryptedData: ecryptedData,
   };
   insertNewUser(newUser);
+  faucet(walletDetail.walletAddress);
 };
 
 export const getPrivateKey = async (phoneNumber: string) => {
