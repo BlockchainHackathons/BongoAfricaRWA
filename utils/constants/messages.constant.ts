@@ -20,3 +20,11 @@ export const getCreatedAccountMsg = (
 
     The Bongo Team`;
 };
+
+export const getReceivedFfundMsg = (amount: string, phoneNumber: string) => {
+  return `You received ${amount} tokens from ${phoneNumber}.`;
+};
+
+export const getSentFundMsg = (amount: string, phoneNumber: string) => {
+  return `You have sent ${amount} tokens to ${phoneNumber}.`;
+};

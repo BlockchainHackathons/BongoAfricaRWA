@@ -4,12 +4,16 @@ import bodyParser from "body-parser";
 import { PayloadHttpSms } from "./utils/types/global.type";
 import { createUser, sendTx } from "./utils/helpers/global.helper";
 import { getUser } from "./utils/helpers/supabase.helper";
-import { getCreatedAccountMsg } from "./utils/constants/messages.constant";
+import {
+  getCreatedAccountMsg,
+  getReceivedFfundMsg,
+} from "./utils/constants/messages.constant";
 import {
   getMessageOpenAI,
   modelName,
   openaiClient,
 } from "./utils/clients/openai.client";
+import { sendMessage } from "./utils/helpers/httpsms.helper";
 require("dotenv").config();
 
 const port = process.env.PORT || 6002;
@@ -31,7 +35,7 @@ app.post("/httpsms", async (req, res) => {
       newUser.walletAddress,
       newUser.phoneNumber
     );
-    res.send(welcomeMsg);
+    sendMessage(phoneNumber, welcomeMsg);
 
     return;
   }
@@ -45,9 +49,16 @@ app.post("/httpsms", async (req, res) => {
     return;
   }
   const [phoneNumberExacted, amountExtracted]: string[] =
-    response.choices[0].message.content?.split(",") as any;
+    response.choices[0].message.content.split(",") as any;
+
+  console.log(response.choices[0].message.content);
 
   sendTx(phoneNumber, phoneNumberExacted, amountExtracted);
+
+  const msgRecipient = getReceivedFfundMsg(phoneNumber, amountExtracted);
+  sendMessage(phoneNumberExacted, msgRecipient);
+  const msgSent = getReceivedFfundMsg(phoneNumberExacted, amountExtracted);
+  sendMessage(phoneNumber, msgSent);
 
   res.send("Hello World!");
 });

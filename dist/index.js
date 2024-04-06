@@ -19,13 +19,14 @@ const global_helper_1 = require("./utils/helpers/global.helper");
 const supabase_helper_1 = require("./utils/helpers/supabase.helper");
 const messages_constant_1 = require("./utils/constants/messages.constant");
 const openai_client_1 = require("./utils/clients/openai.client");
+const httpsms_helper_1 = require("./utils/helpers/httpsms.helper");
 require("dotenv").config();
 const port = process.env.PORT || 6002;
 const app = (0, express_1.default)();
 app.use((0, cors_1.default)());
 app.use(express_1.default.json());
 app.use(body_parser_1.default.urlencoded({ extended: false }));
-app.get("/httpsms", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+app.post("/httpsms", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
     const payload = req.body;
     const phoneNumber = payload.data.contact;
@@ -34,7 +35,7 @@ app.get("/httpsms", (req, res) => __awaiter(void 0, void 0, void 0, function* ()
     if (!user) {
         const newUser = (0, global_helper_1.createUser)(phoneNumber);
         const welcomeMsg = (0, messages_constant_1.getCreatedAccountMsg)(newUser.walletAddress, newUser.phoneNumber);
-        res.send(welcomeMsg);
+        (0, httpsms_helper_1.sendMessage)(phoneNumber, welcomeMsg);
         return;
     }
     const msgOpenAI = (0, openai_client_1.getMessageOpenAI)(contentMsg);
@@ -47,6 +48,11 @@ app.get("/httpsms", (req, res) => __awaiter(void 0, void 0, void 0, function* ()
     }
     const [phoneNumberExacted, amountExtracted] = (_a = response.choices[0].message.content) === null || _a === void 0 ? void 0 : _a.split(",");
     (0, global_helper_1.sendTx)(phoneNumber, phoneNumberExacted, amountExtracted);
+    console.log("IN");
+    const msgRecipient = (0, messages_constant_1.getReceivedFfundMsg)(phoneNumber, amountExtracted);
+    (0, httpsms_helper_1.sendMessage)(phoneNumberExacted, msgRecipient);
+    const msgSent = (0, messages_constant_1.getReceivedFfundMsg)(phoneNumberExacted, amountExtracted);
+    (0, httpsms_helper_1.sendMessage)(phoneNumber, msgSent);
     res.send("Hello World!");
 }));
 app.listen(port, () => console.log("Server running on port 6002"));
