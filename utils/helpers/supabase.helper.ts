@@ -8,7 +8,6 @@ export const insertNewUser = async (newUser: User) => {
     encrypteddata: newUser.encryptedData.encryptedData,
     phonenumber: newUser.phoneNumber,
   });
-  console.log(error);
 };
 
 export const getUser = async (phoneNumber: string): Promise<User | null> => {
@@ -17,7 +16,7 @@ export const getUser = async (phoneNumber: string): Promise<User | null> => {
     .select("*")
     .eq("phonenumber", phoneNumber);
 
-  if (data === null) {
+  if (data === null || data.length === 0) {
     return null;
   }
 

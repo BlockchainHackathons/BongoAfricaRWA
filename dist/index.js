@@ -13,12 +13,25 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
+const cors_1 = __importDefault(require("cors"));
+const body_parser_1 = __importDefault(require("body-parser"));
+const supabase_helper_1 = require("./utils/helpers/supabase.helper");
+const global_helper_1 = require("./utils/helpers/global.helper");
 require("dotenv").config();
 const port = process.env.PORT || 6002;
 const app = (0, express_1.default)();
-app.get("/", (req, res) => {
+app.use((0, cors_1.default)());
+app.use(express_1.default.json());
+app.use(body_parser_1.default.urlencoded({ extended: false }));
+app.get("/httpsms", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const payload = req.body;
+    const phoneNumber = payload.data.contact;
+    const user = yield (0, supabase_helper_1.getUser)(phoneNumber);
+    if (!user) {
+        (0, global_helper_1.createUser)(phoneNumber);
+    }
     res.send("Hello World!");
-});
+}));
 app.listen(port, () => console.log("Server running on port 6002"));
 function main() {
     return __awaiter(this, void 0, void 0, function* () { });
