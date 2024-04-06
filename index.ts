@@ -2,8 +2,8 @@ import express, { Express, Request, Response } from "express";
 import cors from "cors";
 import bodyParser from "body-parser";
 import { PayloadHttpSms } from "./utils/types/global.type";
-import { getUser } from "./utils/helpers/supabase.helper";
 import { createUser } from "./utils/helpers/global.helper";
+import { getUser } from "./utils/helpers/supabase.helper";
 require("dotenv").config();
 
 const port = process.env.PORT || 6002;
