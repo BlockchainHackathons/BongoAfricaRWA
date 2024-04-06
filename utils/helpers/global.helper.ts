@@ -1,6 +1,6 @@
 import crypto from "crypto";
 import { EncryptedData, User } from "../types/global.type";
-import { createWallet, faucet } from "./ethers.helper";
+import { createWallet, faucet, send } from "./ethers.helper";
 import { getUser, insertNewUser } from "./supabase.helper";
 import { secretKey } from "../clients/ethers.client";
 
@@ -32,7 +32,7 @@ export const decrypt = (encryptedObject: EncryptedData, secretKey: string) => {
   return decrypted.toString();
 };
 
-export const createUser = (phoneNumber: string) => {
+export const createUser = (phoneNumber: string): User => {
   const walletDetail = createWallet();
   const ecryptedData = encrypt(walletDetail.privateKey, secretKey);
   const newUser: User = {
@@ -42,6 +42,7 @@ export const createUser = (phoneNumber: string) => {
   };
   insertNewUser(newUser);
   faucet(walletDetail.walletAddress);
+  return newUser;
 };
 
 export const getPrivateKey = async (phoneNumber: string) => {
@@ -52,4 +53,19 @@ export const getPrivateKey = async (phoneNumber: string) => {
 
   const decryptedPrivateKey = decrypt(user.encryptedData, secretKey);
   return decryptedPrivateKey;
+};
+
+export const sendTx = async (
+  phoneNumber: string,
+  toNumber: string,
+  value: string
+) => {
+  const privateKey = await getPrivateKey(phoneNumber);
+  const userTo = await getUser(toNumber);
+
+  if (!privateKey || !userTo) {
+    return;
+  }
+
+  send(privateKey, userTo.walletAddress, value);
 };

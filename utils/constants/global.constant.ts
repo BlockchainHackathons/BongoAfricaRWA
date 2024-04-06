@@ -1,1 +1,1 @@
-export const faucetAmountInETH = "1.0";
+export const faucetAmountInETH = "10.0";

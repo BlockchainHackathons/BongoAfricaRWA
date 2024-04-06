@@ -17,6 +17,7 @@ const cors_1 = __importDefault(require("cors"));
 const body_parser_1 = __importDefault(require("body-parser"));
 const global_helper_1 = require("./utils/helpers/global.helper");
 const supabase_helper_1 = require("./utils/helpers/supabase.helper");
+const messages_constant_1 = require("./utils/constants/messages.constant");
 require("dotenv").config();
 const port = process.env.PORT || 6002;
 const app = (0, express_1.default)();
@@ -28,8 +29,12 @@ app.get("/httpsms", (req, res) => __awaiter(void 0, void 0, void 0, function* ()
     const phoneNumber = payload.data.contact;
     const user = yield (0, supabase_helper_1.getUser)(phoneNumber);
     if (!user) {
-        (0, global_helper_1.createUser)(phoneNumber);
+        const newUser = (0, global_helper_1.createUser)(phoneNumber);
+        const welcomeMsg = (0, messages_constant_1.getCreatedAccountMsg)(newUser.walletAddress, newUser.phoneNumber);
+        res.send(welcomeMsg);
+        return;
     }
+    (0, global_helper_1.sendTx)(phoneNumber, "+337663996549", "1.0");
     res.send("Hello World!");
 }));
 app.listen(port, () => console.log("Server running on port 6002"));
