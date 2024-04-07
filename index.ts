@@ -31,12 +31,8 @@ app.post("/httpsms", async (req, res) => {
   const user = await getUser(phoneNumber);
   if (!user) {
     const newUser = createUser(phoneNumber);
-    const welcomeMsg = getCreatedAccountMsg(
-      newUser.walletAddress,
-      newUser.phoneNumber
-    );
+    const welcomeMsg = getCreatedAccountMsg(newUser.walletAddress);
     sendMessage(phoneNumber, welcomeMsg);
-
     return;
   }
   const msgOpenAI = getMessageOpenAI(contentMsg);
