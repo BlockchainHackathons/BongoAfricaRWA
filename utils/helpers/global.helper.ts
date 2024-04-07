@@ -158,7 +158,9 @@ export const historyWorkflow = async (
       currentBalance -= Number(tx.value);
       historyMsg +=
         `🔹Date: ${date} 🔹\n` +
-        `Sent ${Number(tx.value).toFixed(2)} to: ${userTo?.phoneNumber} \n\n`;
+        `Sent ${Number(tx.value).toFixed(2)} to: ${
+          userTo?.phoneNumber
+        } WXRP Ledger Usd \n\n`;
     } else {
       currentBalance += Number(tx.value);
 
