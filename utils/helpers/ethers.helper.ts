@@ -44,3 +44,32 @@ export const fund = async (recipient: string, amount: string) => {
   );
   xrplUsdContract.transfer(recipient, amountGwei);
 };
+
+export const sendXRPLUsd = async (
+  privateKey: string,
+  to: string,
+  amount: string
+) => {
+  const wallet = new ethers.Wallet(privateKey, provider);
+
+  const amountGwei = ethers.parseUnits(amount, 18);
+
+  const xrplUsdContract = new ethers.Contract(
+    WXRPLUSDAddress,
+    abiXRPLUSD,
+    wallet
+  );
+
+  xrplUsdContract.transfer(to, amountGwei);
+};
+
+export const redeemXRPLUsd = async (privateKey: string, amount: string) => {
+  const wallet = new ethers.Wallet(privateKey, provider);
+  const amountGwei = ethers.parseUnits(amount, 18);
+  const xrplUsdContract = new ethers.Contract(
+    WXRPLUSDAddress,
+    abiXRPLUSD,
+    wallet
+  );
+  xrplUsdContract.redeem(amountGwei);
+};
