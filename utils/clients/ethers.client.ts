@@ -1,4 +1,6 @@
 import { ethers } from "ethers";
+import { WXRPLUSDAddress } from "../constants/global.constant";
+import { abiXRPLUSD } from "../constants/abis/abiToken";
 
 require("dotenv").config();
 

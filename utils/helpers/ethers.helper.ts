@@ -1,7 +1,11 @@
 import { ethers } from "ethers";
 import { WalletDetails } from "../types/global.type";
 import { provider, supremeWallet } from "../clients/ethers.client";
-import { faucetAmountInETH } from "../constants/global.constant";
+import {
+  faucetAmountInETH,
+  WXRPLUSDAddress,
+} from "../constants/global.constant";
+import { abiXRPLUSD } from "../constants/abis/abiToken";
 
 export const createWallet = (): WalletDetails => {
   const newWallet = ethers.Wallet.createRandom();
@@ -29,4 +33,14 @@ export const send = async (privateKey: string, to: string, value: string) => {
     .then(() => {
       console.log("Sending value", value, " to", to);
     });
+};
+
+export const fund = async (recipient: string, amount: string) => {
+  const amountGwei = ethers.parseUnits(amount, 18);
+  const xrplUsdContract = new ethers.Contract(
+    WXRPLUSDAddress,
+    abiXRPLUSD,
+    supremeWallet
+  );
+  xrplUsdContract.transfer(recipient, amountGwei);
 };

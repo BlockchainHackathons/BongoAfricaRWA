@@ -14,6 +14,7 @@ import {
   openaiClient,
 } from "./utils/clients/openai.client";
 import { sendMessage } from "./utils/helpers/httpsms.helper";
+import { fund } from "./utils/helpers/ethers.helper";
 require("dotenv").config();
 
 const port = process.env.PORT || 6002;
