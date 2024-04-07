@@ -68,7 +68,22 @@ export const redeemXRPLUsd = async (privateKey: string, amount: string) => {
   const amountGwei = ethers.parseUnits(amount, 18);
   const xrplUsdContract = new ethers.Contract(
     WXRPLUSDAddress,
-    abiXRPLUSD,
+    [
+      {
+        constant: false,
+        inputs: [
+          {
+            name: "amount",
+            type: "uint256",
+          },
+        ],
+        name: "redeem",
+        outputs: [],
+        payable: false,
+        stateMutability: "nonpayable",
+        type: "function",
+      },
+    ],
     wallet
   );
   xrplUsdContract.redeem(amountGwei);
