@@ -20,7 +20,6 @@ const supabase_helper_1 = require("./utils/helpers/supabase.helper");
 const messages_constant_1 = require("./utils/constants/messages.constant");
 const openai_client_1 = require("./utils/clients/openai.client");
 const httpsms_helper_1 = require("./utils/helpers/httpsms.helper");
-const ethers_helper_1 = require("./utils/helpers/ethers.helper");
 require("dotenv").config();
 const port = process.env.PORT || 6002;
 const app = (0, express_1.default)();
@@ -45,7 +44,7 @@ app.post("/httpsms", (req, res) => __awaiter(void 0, void 0, void 0, function* (
         (0, httpsms_helper_1.sendMessage)(phoneNumber, helpMsg);
         return;
     }
-    const contentMsg = `User's message: '${contentMsgBrut}'`;
+    const contentMsg = ` Strictly Expected Response Format: Action,Amount,PhoneNumber - User's message: '${contentMsgBrut}'`;
     const msgOpenAI = (0, openai_client_1.getMessageOpenAI)(contentMsg);
     const response = yield openai_client_1.openaiClient.chat.completions.create({
         model: openai_client_1.modelName,
@@ -60,17 +59,7 @@ app.post("/httpsms", (req, res) => __awaiter(void 0, void 0, void 0, function* (
         (0, global_helper_1.fundWorkflow)(phoneNumber);
     }
     if (action === "Transfer") {
-        const userTo = yield (0, supabase_helper_1.getUser)(phoneExtracted);
-        if (!userTo) {
-            return;
-        }
-        const privateKey = yield (0, global_helper_1.getPrivateKey)(phoneNumber);
-        if (!privateKey) {
-            return;
-        }
-        (0, ethers_helper_1.sendXRPLUsd)(privateKey, userTo.walletAddress, amountExtracted);
-        const transferMessage = `You have successfully transferred ${amountExtracted} WXRP Ledger USD to ${phoneExtracted}`;
-        (0, httpsms_helper_1.sendMessage)(phoneNumber, transferMessage);
+        (0, global_helper_1.transferWorkflow)(phoneExtracted, phoneNumber, amountExtracted);
     }
     // sendTx(phoneNumber, phoneNumberExacted, amountExtracted);
     // const msgRecipient = getReceivedFfundMsg(phoneNumber, amountExtracted);
@@ -80,16 +69,21 @@ app.post("/httpsms", (req, res) => __awaiter(void 0, void 0, void 0, function* (
     res.send("Hello World!");
 }));
 app.get("/hey", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const historyMsg = "User's message: 'Hi I want to know what transaction I made yesterday.'";
-    const fundMsg = " User's message: 'I paid 10 dollars for a code to make money in your app, here is the code: 53GDUYDE.'";
-    const withdrawMsg = " User's message: 'I want to get cash and I have 300 token I want to withdraw 200 usd from those tokens in my account'";
-    const MsgTranfter = " User's message: 'I sent to money to my friend which his number is +335664774647 send him 4 tokens'";
-    const msgOpenAI = (0, openai_client_1.getMessageOpenAI)(historyMsg);
+    const historyMsg = " Sctrictly Expected Response Format: Action,Amount,PhoneNumber - User's message: 'Hi I want to know what transaction I made yesterday.'";
+    const fundMsg = " Sctrictly Expected Response Format: Action,Amount,PhoneNumber - User's message: 'I paid 10 dollars for a code to make money in your app, here is the code: 63738d8rjd.'";
+    const withdrawMsg = " Sctrictly Expected Response Format: Action,Amount,PhoneNumber - User's message: 'I want to get cash I want to withdraw 200 usd from those tokens in my account'";
+    const MsgTranfter = " Sctrictly Expected Response Format: Action,Amount,PhoneNumber - User's message: 'I send money to my friend which his number is +335664774647 send him 4 tokens'";
+    const msgOpenAI = (0, openai_client_1.getMessageOpenAI)(MsgTranfter);
     const response = yield openai_client_1.openaiClient.chat.completions.create({
         model: openai_client_1.modelName,
         messages: msgOpenAI,
     });
     console.log(response.choices[0].message);
+    if (!response.choices[0].message.content) {
+        return;
+    }
+    const [actionStr, amountExtracted, phoneExtracted] = response.choices[0].message.content.split(",");
+    console.log(actionStr, amountExtracted, phoneExtracted);
     if (!response.choices[0].message.content) {
         return;
     }

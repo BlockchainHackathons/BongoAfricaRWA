@@ -51,7 +51,7 @@ app.post("/httpsms", async (req, res) => {
 
     return;
   }
-  const contentMsg = `User's message: '${contentMsgBrut}'`;
+  const contentMsg = ` Strictly Expected Response Format: Action,Amount,PhoneNumber - User's message: '${contentMsgBrut}'`;
 
   const msgOpenAI = getMessageOpenAI(contentMsg);
 
@@ -88,14 +88,14 @@ app.post("/httpsms", async (req, res) => {
 
 app.get("/hey", async (req, res) => {
   const historyMsg =
-    "User's message: 'Hi I want to know what transaction I made yesterday.'";
+    " Sctrictly Expected Response Format: Action,Amount,PhoneNumber - User's message: 'Hi I want to know what transaction I made yesterday.'";
   const fundMsg =
-    " User's message: 'I paid 10 dollars for a code to make money in your app, here is the code: 53GDUYDE.'";
+    " Sctrictly Expected Response Format: Action,Amount,PhoneNumber - User's message: 'I paid 10 dollars for a code to make money in your app, here is the code: 63738d8rjd.'";
   const withdrawMsg =
-    " User's message: 'I want to get cash and I have 300 token I want to withdraw 200 usd from those tokens in my account'";
+    " Sctrictly Expected Response Format: Action,Amount,PhoneNumber - User's message: 'I want to get cash I want to withdraw 200 usd from those tokens in my account'";
   const MsgTranfter =
-    " User's message: 'I sent to money to my friend which his number is +335664774647 send him 4 tokens'";
-  const msgOpenAI = getMessageOpenAI(historyMsg);
+    " Sctrictly Expected Response Format: Action,Amount,PhoneNumber - User's message: 'I send money to my friend which his number is +335664774647 send him 4 tokens'";
+  const msgOpenAI = getMessageOpenAI(MsgTranfter);
 
   const response = await openaiClient.chat.completions.create({
     model: modelName,
@@ -103,6 +103,14 @@ app.get("/hey", async (req, res) => {
   });
 
   console.log(response.choices[0].message);
+
+  if (!response.choices[0].message.content) {
+    return;
+  }
+  const [actionStr, amountExtracted, phoneExtracted]: string[] =
+    response.choices[0].message.content.split(",") as any;
+
+  console.log(actionStr, amountExtracted, phoneExtracted);
 
   if (!response.choices[0].message.content) {
     return;
