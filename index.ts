@@ -5,6 +5,7 @@ import { Action, PayloadHttpSms } from "./utils/types/global.type";
 import {
   createUser,
   fundWorkflow,
+  getCurrentBalance,
   getHistoryTx,
   getPrivateKey,
   historyWorkflow,
@@ -85,11 +86,22 @@ app.post("/httpsms", async (req, res) => {
       const msgAmountExtractedLeft =
         "We understood that you wanted to make a Transfer, but we were unable to identify the amount.";
       sendMessage(phoneNumber, msgAmountExtractedLeft);
+      return;
+    }
+    const currentBalance = await getCurrentBalance(user.walletAddress);
+    if (currentBalance < Number(amountExtracted)) {
+      sendMessage(
+        phoneNumber,
+        "Amount to transfer is bigger than your current balance."
+      );
+
+      return;
     }
     if (phoneNumber === null) {
       const msgPhoneNumberExtractedLeft =
         "We understood that you wanted to make a Transfer, but we were unable to identify the phone number.";
       sendMessage(phoneNumber, msgPhoneNumberExtractedLeft);
+      return;
     }
     transferWorkflow(phoneExtracted, phoneNumber, amountExtracted);
   }
@@ -101,6 +113,16 @@ app.post("/httpsms", async (req, res) => {
       const msgAmountExtractedLeft =
         "We understood that you wanted to make a withdrawal, but we were unable to identify the amount.";
       sendMessage(phoneNumber, msgAmountExtractedLeft);
+      return;
+    }
+    const currentBalance = await getCurrentBalance(user.walletAddress);
+    if (currentBalance < Number(amountExtracted)) {
+      sendMessage(
+        phoneNumber,
+        "Amount to withdraw is bigger than your current balance."
+      );
+
+      return;
     }
     withdrawWorkflow(phoneNumber, amountExtracted);
   }

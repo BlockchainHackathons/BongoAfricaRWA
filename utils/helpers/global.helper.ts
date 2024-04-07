@@ -200,3 +200,17 @@ export const historyWorkflow = async (
   )} WXRP Ledger Usd 💸`;
   sendMessage(phoneNumber, historyMsg);
 };
+
+export const getCurrentBalance = async (walletAddress: string) => {
+  const txHistory = await getHistoryTx(walletAddress);
+  let currentBalance = 0;
+
+  for (const tx of txHistory) {
+    if (tx.from === walletAddress) {
+      currentBalance -= Number(tx.value);
+    } else {
+      currentBalance += Number(tx.value);
+    }
+  }
+  return currentBalance;
+};

@@ -61,10 +61,42 @@ app.post("/httpsms", (req, res) => __awaiter(void 0, void 0, void 0, function* (
         (0, global_helper_1.fundWorkflow)(phoneNumber);
     }
     if (action === "Transfer") {
+        if (amountExtracted === null) {
+            const msgAmountExtractedLeft = "We understood that you wanted to make a Transfer, but we were unable to identify the amount.";
+            (0, httpsms_helper_1.sendMessage)(phoneNumber, msgAmountExtractedLeft);
+            return;
+        }
+        const currentBalance = yield (0, global_helper_1.getCurrentBalance)(user.walletAddress);
+        if (currentBalance < Number(amountExtracted)) {
+            (0, httpsms_helper_1.sendMessage)(phoneNumber, "Amount to transfer is bigger than your current balance.");
+            return;
+        }
+        if (phoneNumber === null) {
+            const msgPhoneNumberExtractedLeft = "We understood that you wanted to make a Transfer, but we were unable to identify the phone number.";
+            (0, httpsms_helper_1.sendMessage)(phoneNumber, msgPhoneNumberExtractedLeft);
+            return;
+        }
         (0, global_helper_1.transferWorkflow)(phoneExtracted, phoneNumber, amountExtracted);
     }
     if (action === "History") {
         (0, global_helper_1.historyWorkflow)(phoneNumber, user.walletAddress);
+    }
+    if (action === "Withdraw") {
+        if (amountExtracted === null) {
+            const msgAmountExtractedLeft = "We understood that you wanted to make a withdrawal, but we were unable to identify the amount.";
+            (0, httpsms_helper_1.sendMessage)(phoneNumber, msgAmountExtractedLeft);
+            return;
+        }
+        const currentBalance = yield (0, global_helper_1.getCurrentBalance)(user.walletAddress);
+        if (currentBalance < Number(amountExtracted)) {
+            (0, httpsms_helper_1.sendMessage)(phoneNumber, "Amount to withdraw is bigger than your current balance.");
+            return;
+        }
+        (0, global_helper_1.withdrawWorkflow)(phoneNumber, amountExtracted);
+    }
+    if (action === null) {
+        const noActionMsg = "No action has been specified and identified in your previous message. Please rephrase your sentence.";
+        (0, httpsms_helper_1.sendMessage)(phoneNumber, noActionMsg);
     }
     // sendTx(phoneNumber, phoneNumberExacted, amountExtracted);
     // const msgRecipient = getReceivedFfundMsg(phoneNumber, amountExtracted);
@@ -76,7 +108,7 @@ app.post("/httpsms", (req, res) => __awaiter(void 0, void 0, void 0, function* (
 app.get("/hey", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const historyMsg = " Sctrictly Expected Response Format: Action,Amount,PhoneNumber - User's message: 'Hi I want to know what transaction I made yesterday.'";
     const fundMsg = " Sctrictly Expected Response Format: Action,Amount,PhoneNumber - User's message: 'I paid 10 dollars for a code to make money in your app, here is the code: 63738d8rjd.'";
-    const withdrawMsg = " Sctrictly Expected Response Format: Action,Amount,PhoneNumber - User's message: 'I want to get cash I want to withdraw 200 usd from those tokens in my account'";
+    const withdrawMsg = " Sctrictly Expected Response Format: Action,Amount,PhoneNumber - User's message: 'I want to get cash I want to withdraw 20 usd from those tokens in my account'";
     const MsgTranfter = " Sctrictly Expected Response Format: Action,Amount,PhoneNumber - User's message: 'I send money to my friend which his number is +335664774647 send him 4 tokens'";
     const msgOpenAI = (0, openai_client_1.getMessageOpenAI)(fundMsg);
     const response = yield openai_client_1.openaiClient.chat.completions.create({
@@ -97,8 +129,6 @@ app.get("/hey", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
 }));
 app.listen(port, () => console.log("Server running on port 6002"));
 function main() {
-    return __awaiter(this, void 0, void 0, function* () {
-        (0, global_helper_1.historyWorkflow)("+33766399654", "0x4F5Aa3b4bD77717b34454E6A951c022C19232f7C");
-    });
+    return __awaiter(this, void 0, void 0, function* () { });
 }
 main();
