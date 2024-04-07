@@ -5,7 +5,9 @@ import { Action, PayloadHttpSms } from "./utils/types/global.type";
 import {
   createUser,
   fundWorkflow,
+  getHistoryTx,
   getPrivateKey,
+  historyWorkflow,
   sendTx,
   transferWorkflow,
 } from "./utils/helpers/global.helper";
@@ -52,7 +54,7 @@ app.post("/httpsms", async (req, res) => {
 
     return;
   }
-  const contentMsg = `Sctrictly Expected Response Format: Action,Amount,PhoneNumber - User's message: '${contentMsgBrut}'"`;
+  const contentMsg = `Sctrictly Expected Response Format: Action,Amount,PhoneNumber - User's message: '${contentMsgBrut}'`;
 
   const msgOpenAI = getMessageOpenAI(contentMsg);
 
@@ -79,6 +81,9 @@ app.post("/httpsms", async (req, res) => {
   }
   if (action === "Transfer") {
     transferWorkflow(phoneExtracted, phoneNumber, amountExtracted);
+  }
+  if (action === "History") {
+    historyWorkflow(phoneNumber, user.walletAddress);
   }
 
   // sendTx(phoneNumber, phoneNumberExacted, amountExtracted);

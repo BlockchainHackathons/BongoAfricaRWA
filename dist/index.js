@@ -33,7 +33,6 @@ app.post("/httpsms", (req, res) => __awaiter(void 0, void 0, void 0, function* (
         console.log("IN");
         return;
     }
-    console.log("IN Two");
     const phoneNumber = payload.data.contact;
     const contentMsgBrut = payload.data.content;
     const user = yield (0, supabase_helper_1.getUser)(phoneNumber);
@@ -45,7 +44,7 @@ app.post("/httpsms", (req, res) => __awaiter(void 0, void 0, void 0, function* (
         (0, httpsms_helper_1.sendMessage)(phoneNumber, helpMsg);
         return;
     }
-    const contentMsg = ` Strictly Expected Response Format: Action,Amount,PhoneNumber - User's message: '${contentMsgBrut}'`;
+    const contentMsg = `Sctrictly Expected Response Format: Action,Amount,PhoneNumber - User's message: '${contentMsgBrut}'`;
     const msgOpenAI = (0, openai_client_1.getMessageOpenAI)(contentMsg);
     const response = yield openai_client_1.openaiClient.chat.completions.create({
         model: openai_client_1.modelName,
@@ -63,6 +62,9 @@ app.post("/httpsms", (req, res) => __awaiter(void 0, void 0, void 0, function* (
     }
     if (action === "Transfer") {
         (0, global_helper_1.transferWorkflow)(phoneExtracted, phoneNumber, amountExtracted);
+    }
+    if (action === "History") {
+        (0, global_helper_1.historyWorkflow)(phoneNumber, user.walletAddress);
     }
     // sendTx(phoneNumber, phoneNumberExacted, amountExtracted);
     // const msgRecipient = getReceivedFfundMsg(phoneNumber, amountExtracted);

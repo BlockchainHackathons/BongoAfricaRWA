@@ -139,3 +139,24 @@ export const transferWorkflow = async (
   const transferMessage = `You have successfully transferred ${amountExtracted} WXRP Ledger USD to ${phoneExtracted}`;
   sendMessage(phoneNumber, transferMessage);
 };
+
+export const historyWorkflow = async (
+  phoneNumber: string,
+  walletAddress: string
+) => {
+  const txHistory = await getHistoryTx(walletAddress);
+  let historyMsg = `📅 Your Transaction History 📅 \n\n`;
+  txHistory.forEach((tx) => {
+    const date = new Date(tx.timestamp).toLocaleDateString("en-US", {
+      month: "long",
+      day: "numeric",
+      year: "numeric",
+    });
+    historyMsg +=
+      `🔹 **Date:** ${date} \n` +
+      `    **From:** ${tx.from} \n` +
+      `    **To:** ${tx.to} \n` +
+      `    **Amount:** ${tx.value} 💸\n\n`;
+  });
+  sendMessage(phoneNumber, historyMsg);
+};
