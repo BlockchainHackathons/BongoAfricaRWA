@@ -35,6 +35,8 @@ app.post("/httpsms", (req, res) => __awaiter(void 0, void 0, void 0, function* (
         const newUser = (0, global_helper_1.createUser)(phoneNumber);
         const welcomeMsg = (0, messages_constant_1.getCreatedAccountMsg)(newUser.walletAddress);
         (0, httpsms_helper_1.sendMessage)(phoneNumber, welcomeMsg);
+        const helpMsg = (0, messages_constant_1.getHelpMsg)();
+        (0, httpsms_helper_1.sendMessage)(phoneNumber, helpMsg);
         return;
     }
     const msgOpenAI = (0, openai_client_1.getMessageOpenAI)(contentMsg);
@@ -53,6 +55,9 @@ app.post("/httpsms", (req, res) => __awaiter(void 0, void 0, void 0, function* (
     const msgSent = (0, messages_constant_1.getReceivedFfundMsg)(phoneNumberExacted, amountExtracted);
     (0, httpsms_helper_1.sendMessage)(phoneNumber, msgSent);
     res.send("Hello World!");
+}));
+app.get("/hey", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    res.send("hello world");
 }));
 app.listen(port, () => console.log("Server running on port 6002"));
 function main() {

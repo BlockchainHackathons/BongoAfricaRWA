@@ -6,6 +6,7 @@ import { createUser, sendTx } from "./utils/helpers/global.helper";
 import { getUser } from "./utils/helpers/supabase.helper";
 import {
   getCreatedAccountMsg,
+  getHelpMsg,
   getReceivedFfundMsg,
 } from "./utils/constants/messages.constant";
 import {
@@ -34,6 +35,9 @@ app.post("/httpsms", async (req, res) => {
     const newUser = createUser(phoneNumber);
     const welcomeMsg = getCreatedAccountMsg(newUser.walletAddress);
     sendMessage(phoneNumber, welcomeMsg);
+    const helpMsg = getHelpMsg();
+    sendMessage(phoneNumber, helpMsg);
+
     return;
   }
   const msgOpenAI = getMessageOpenAI(contentMsg);
@@ -60,6 +64,9 @@ app.post("/httpsms", async (req, res) => {
   res.send("Hello World!");
 });
 
+app.get("/hey", async (req, res) => {
+  res.send("hello world");
+});
 app.listen(port, () => console.log("Server running on port 6002"));
 
 async function main() {}
