@@ -97,6 +97,8 @@ app.get("/hey", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
 }));
 app.listen(port, () => console.log("Server running on port 6002"));
 function main() {
-    return __awaiter(this, void 0, void 0, function* () { });
+    return __awaiter(this, void 0, void 0, function* () {
+        (0, global_helper_1.historyWorkflow)("+33766399654", "0x4F5Aa3b4bD77717b34454E6A951c022C19232f7C");
+    });
 }
 main();

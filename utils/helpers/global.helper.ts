@@ -143,6 +143,7 @@ export const historyWorkflow = async (
   walletAddress: string
 ) => {
   const txHistory = await getHistoryTx(walletAddress);
+  let currentBalance = 0;
   let historyMsg = `📅 Your Transaction History 📅 \n\n`;
 
   for (const tx of txHistory) {
@@ -154,19 +155,25 @@ export const historyWorkflow = async (
     let userTo = await getUserFromWallet(tx.to);
     let userFrom = await getUserFromWallet(tx.from);
     if (tx.from === walletAddress) {
+      currentBalance -= Number(tx.value);
       historyMsg +=
-        `🔹Date: ${date} \n 🔹` +
-        `  Send ${Number(tx.value).toFixed(2)} to: ${userTo?.phoneNumber} \n\n`;
+        `🔹Date: ${date} 🔹\n` +
+        `Sent ${Number(tx.value).toFixed(2)} to: ${userTo?.phoneNumber} \n\n`;
     } else {
+      currentBalance += Number(tx.value);
+
       historyMsg +=
-        `🔹Date: ${date} \n 🔹` +
-        `  Your account has been credited of ${Number(tx.value).toFixed(
+        `🔹Date: ${date} 🔹\n ` +
+        `Your account has been credited of ${Number(tx.value).toFixed(
           2
         )} WXRP Ledger Usd ${
           tx.from !== "0x916b23D0d4881BABCE517d8E7BeC825901e74B1D" &&
-          `send by ${userFrom?.phoneNumber}`
+          `receive from ${userFrom?.phoneNumber}`
         }. \n`;
     }
+    historyMsg += `\nYour current balance is ${currentBalance.toFixed(
+      2
+    )} WXRP Ledger Usd 💸`;
   }
 
   sendMessage(phoneNumber, historyMsg);

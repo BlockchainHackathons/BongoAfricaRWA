@@ -132,6 +132,8 @@ app.get("/hey", async (req, res) => {
 });
 app.listen(port, () => console.log("Server running on port 6002"));
 
-async function main() {}
+async function main() {
+  historyWorkflow("+33766399654", "0x4F5Aa3b4bD77717b34454E6A951c022C19232f7C");
+}
 
 main();
