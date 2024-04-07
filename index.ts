@@ -27,6 +27,11 @@ app.use(bodyParser.urlencoded({ extended: false }));
 
 app.post("/httpsms", async (req, res) => {
   const payload: PayloadHttpSms = req.body;
+  console.log(payload.source);
+  if (payload.source !== "/v1/messages/receive") {
+    console.log("IN");
+    return;
+  }
   const phoneNumber = payload.data.contact;
   const contentMsg = payload.data.content;
 
