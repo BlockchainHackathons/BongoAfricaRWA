@@ -126,7 +126,7 @@ app.get("/hey", async (req, res) => {
   const fundMsg =
     " Sctrictly Expected Response Format: Action,Amount,PhoneNumber - User's message: 'I paid 10 dollars for a code to make money in your app, here is the code: 63738d8rjd.'";
   const withdrawMsg =
-    " Sctrictly Expected Response Format: Action,Amount,PhoneNumber - User's message: 'I want to get cash I want to withdraw 200 usd from those tokens in my account'";
+    " Sctrictly Expected Response Format: Action,Amount,PhoneNumber - User's message: 'I want to get cash I want to withdraw 20 usd from those tokens in my account'";
   const MsgTranfter =
     " Sctrictly Expected Response Format: Action,Amount,PhoneNumber - User's message: 'I send money to my friend which his number is +335664774647 send him 4 tokens'";
   const msgOpenAI = getMessageOpenAI(fundMsg);

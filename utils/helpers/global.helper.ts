@@ -192,10 +192,10 @@ export const historyWorkflow = async (
         )} WXRP Ledger Usd ${
           tx.from !== "0x916b23D0d4881BABCE517d8E7BeC825901e74B1D" &&
           `receive from ${userFrom?.phoneNumber}`
-        }. \n`;
+        }. \n\n`;
     }
   }
-  historyMsg += `\nYour current balance is ${currentBalance.toFixed(
+  historyMsg += `Your current balance is ${currentBalance.toFixed(
     2
   )} WXRP Ledger Usd 💸`;
   sendMessage(phoneNumber, historyMsg);
