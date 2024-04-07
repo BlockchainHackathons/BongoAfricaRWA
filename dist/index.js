@@ -33,6 +33,7 @@ app.post("/httpsms", (req, res) => __awaiter(void 0, void 0, void 0, function* (
         console.log("IN");
         return;
     }
+    console.log("IN Two");
     const phoneNumber = payload.data.contact;
     const contentMsgBrut = payload.data.content;
     const user = yield (0, supabase_helper_1.getUser)(phoneNumber);
@@ -50,11 +51,13 @@ app.post("/httpsms", (req, res) => __awaiter(void 0, void 0, void 0, function* (
         model: openai_client_1.modelName,
         messages: msgOpenAI,
     });
+    console.log(response.choices[0].message);
     if (!response.choices[0].message.content) {
         return;
     }
     const [actionStr, amountExtracted, phoneExtracted] = response.choices[0].message.content.split(",");
     const action = actionStr;
+    console.log(action);
     if (action === "Fund") {
         (0, global_helper_1.fundWorkflow)(phoneNumber);
     }
@@ -73,7 +76,7 @@ app.get("/hey", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const fundMsg = " Sctrictly Expected Response Format: Action,Amount,PhoneNumber - User's message: 'I paid 10 dollars for a code to make money in your app, here is the code: 63738d8rjd.'";
     const withdrawMsg = " Sctrictly Expected Response Format: Action,Amount,PhoneNumber - User's message: 'I want to get cash I want to withdraw 200 usd from those tokens in my account'";
     const MsgTranfter = " Sctrictly Expected Response Format: Action,Amount,PhoneNumber - User's message: 'I send money to my friend which his number is +335664774647 send him 4 tokens'";
-    const msgOpenAI = (0, openai_client_1.getMessageOpenAI)(MsgTranfter);
+    const msgOpenAI = (0, openai_client_1.getMessageOpenAI)(fundMsg);
     const response = yield openai_client_1.openaiClient.chat.completions.create({
         model: openai_client_1.modelName,
         messages: msgOpenAI,
@@ -83,6 +86,7 @@ app.get("/hey", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         return;
     }
     const [actionStr, amountExtracted, phoneExtracted] = response.choices[0].message.content.split(",");
+    console.log(actionStr === "Fund");
     console.log(actionStr, amountExtracted, phoneExtracted);
     if (!response.choices[0].message.content) {
         return;

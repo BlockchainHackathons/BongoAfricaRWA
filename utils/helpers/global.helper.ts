@@ -115,7 +115,7 @@ export const fundWorkflow = async (phoneNumber: string) => {
   if (!user) {
     return;
   }
-  fund(user?.walletAddress, randomNumber.toString());
+  fund(user.walletAddress, randomNumber.toString());
   const messageFund = `You have been credited of ${randomNumber} Wrapped XRP Ledger USD.`;
 
   sendMessage(phoneNumber, messageFund);

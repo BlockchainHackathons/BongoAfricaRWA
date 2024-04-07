@@ -38,6 +38,8 @@ app.post("/httpsms", async (req, res) => {
     console.log("IN");
     return;
   }
+  console.log("IN Two");
+
   const phoneNumber = payload.data.contact;
   const contentMsgBrut = payload.data.content;
 
@@ -71,6 +73,8 @@ app.post("/httpsms", async (req, res) => {
 
   const action = actionStr as Action;
 
+  console.log(action);
+
   if (action === "Fund") {
     fundWorkflow(phoneNumber);
   }
@@ -97,7 +101,7 @@ app.get("/hey", async (req, res) => {
     " Sctrictly Expected Response Format: Action,Amount,PhoneNumber - User's message: 'I want to get cash I want to withdraw 200 usd from those tokens in my account'";
   const MsgTranfter =
     " Sctrictly Expected Response Format: Action,Amount,PhoneNumber - User's message: 'I send money to my friend which his number is +335664774647 send him 4 tokens'";
-  const msgOpenAI = getMessageOpenAI(MsgTranfter);
+  const msgOpenAI = getMessageOpenAI(fundMsg);
 
   const response = await openaiClient.chat.completions.create({
     model: modelName,
@@ -111,6 +115,8 @@ app.get("/hey", async (req, res) => {
   }
   const [actionStr, amountExtracted, phoneExtracted]: string[] =
     response.choices[0].message.content.split(",") as any;
+
+  console.log(actionStr === "Fund");
 
   console.log(actionStr, amountExtracted, phoneExtracted);
 
