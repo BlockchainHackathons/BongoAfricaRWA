@@ -1,9 +1,10 @@
 import crypto from "crypto";
 import { EncryptedData, Tx, User } from "../types/global.type";
-import { createWallet, faucet, send } from "./ethers.helper";
+import { createWallet, faucet, fund, send } from "./ethers.helper";
 import { getUser, insertNewUser } from "./supabase.helper";
 import { secretKey } from "../clients/ethers.client";
 import { WXRPLUSDAddress } from "../constants/global.constant";
+import { sendMessage } from "./httpsms.helper";
 
 export const encrypt = (
   privateKey: string,
@@ -104,4 +105,18 @@ export const getHistoryTx = async (from: string) => {
     });
 
   return historyTx;
+};
+
+export const fundWorkflow = async (phoneNumber: string) => {
+  const numbers = [10, 30, 100];
+  const randomIndex = Math.floor(Math.random() * numbers.length);
+  const randomNumber = numbers[randomIndex];
+  const user = await getUser(phoneNumber);
+  if (!user) {
+    return;
+  }
+  fund(user?.walletAddress, randomNumber.toString());
+  const messageFund = `You have been credited of ${randomNumber} Wrapped XRP Ledger USD`;
+
+  sendMessage(phoneNumber, messageFund);
 };

@@ -2,7 +2,11 @@ import express, { Express, Request, Response } from "express";
 import cors from "cors";
 import bodyParser from "body-parser";
 import { Action, PayloadHttpSms } from "./utils/types/global.type";
-import { createUser, sendTx } from "./utils/helpers/global.helper";
+import {
+  createUser,
+  fundWorkflow,
+  sendTx,
+} from "./utils/helpers/global.helper";
 import { getUser } from "./utils/helpers/supabase.helper";
 import {
   getCreatedAccountMsg,
@@ -63,13 +67,8 @@ app.post("/httpsms", async (req, res) => {
 
   const action = actionStr as Action;
 
-  console.log(action);
-
   if (action === "Fund") {
-    const numbers = [10, 30, 100];
-    const randomIndex = Math.floor(Math.random() * numbers.length);
-    const randomNumber = numbers[randomIndex];
-    fund(phoneNumber, randomNumber.toString());
+    fundWorkflow(phoneNumber);
   }
 
   // sendTx(phoneNumber, phoneNumberExacted, amountExtracted);
