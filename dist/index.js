@@ -27,14 +27,13 @@ app.use((0, cors_1.default)());
 app.use(express_1.default.json());
 app.use(body_parser_1.default.urlencoded({ extended: false }));
 app.post("/httpsms", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a;
     const payload = req.body;
     const phoneNumber = payload.data.contact;
     const contentMsg = payload.data.content;
     const user = yield (0, supabase_helper_1.getUser)(phoneNumber);
     if (!user) {
         const newUser = (0, global_helper_1.createUser)(phoneNumber);
-        const welcomeMsg = (0, messages_constant_1.getCreatedAccountMsg)(newUser.walletAddress, newUser.phoneNumber);
+        const welcomeMsg = (0, messages_constant_1.getCreatedAccountMsg)(newUser.walletAddress);
         (0, httpsms_helper_1.sendMessage)(phoneNumber, welcomeMsg);
         return;
     }
@@ -46,9 +45,9 @@ app.post("/httpsms", (req, res) => __awaiter(void 0, void 0, void 0, function* (
     if (!response.choices[0].message.content) {
         return;
     }
-    const [phoneNumberExacted, amountExtracted] = (_a = response.choices[0].message.content) === null || _a === void 0 ? void 0 : _a.split(",");
+    const [phoneNumberExacted, amountExtracted] = response.choices[0].message.content.split(",");
+    console.log(response.choices[0].message.content);
     (0, global_helper_1.sendTx)(phoneNumber, phoneNumberExacted, amountExtracted);
-    console.log("IN");
     const msgRecipient = (0, messages_constant_1.getReceivedFfundMsg)(phoneNumber, amountExtracted);
     (0, httpsms_helper_1.sendMessage)(phoneNumberExacted, msgRecipient);
     const msgSent = (0, messages_constant_1.getReceivedFfundMsg)(phoneNumberExacted, amountExtracted);

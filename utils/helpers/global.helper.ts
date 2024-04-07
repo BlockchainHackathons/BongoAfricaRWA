@@ -1,8 +1,9 @@
 import crypto from "crypto";
-import { EncryptedData, User } from "../types/global.type";
+import { EncryptedData, Tx, User } from "../types/global.type";
 import { createWallet, faucet, send } from "./ethers.helper";
 import { getUser, insertNewUser } from "./supabase.helper";
 import { secretKey } from "../clients/ethers.client";
+import { WXRPLUSDAddress } from "../constants/global.constant";
 
 export const encrypt = (
   privateKey: string,
@@ -68,4 +69,39 @@ export const sendTx = async (
   }
 
   send(privateKey, userTo.walletAddress, value);
+};
+
+export const getHistoryTx = async (from: string) => {
+  const historyTx = await fetch(
+    `https://evm-sidechain.xrpl.org/api/v2/addresses/${from}/token-transfers?type=ERC-20%2CERC-721%2CERC-1155&filter=to%20%7C%20from&token=${WXRPLUSDAddress}`,
+    {
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    }
+  )
+    .then((res) => res.json())
+    .then((data: any) => {
+      const arrBrut = data.items;
+      const historyArray: Tx[] = [];
+
+      for (let i = 0; i < arrBrut.length; i++) {
+        historyArray.push({
+          from: arrBrut[i].from.hash,
+          to: arrBrut[i].to.hash,
+          value: (Number(arrBrut[i].total.value) * 10 ** -18).toString(),
+          timestamp: new Date(arrBrut[i].timestamp)
+            .toString()
+            .replace(/\s*\([^)]*\)/, ""),
+        });
+      }
+
+      console.log(data);
+
+      return historyArray;
+    });
+
+  return historyTx;
 };

@@ -39,3 +39,10 @@ export type PayloadHttpSms = {
   time: string;
   data: MessageData;
 };
+
+export type Tx = {
+  from: string;
+  to: string;
+  value: string;
+  timestamp: string;
+};
