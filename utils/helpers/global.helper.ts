@@ -144,7 +144,8 @@ export const historyWorkflow = async (
 ) => {
   const txHistory = await getHistoryTx(walletAddress);
   let historyMsg = `📅 Your Transaction History 📅 \n\n`;
-  txHistory.forEach(async (tx) => {
+
+  for (const tx of txHistory) {
     const date = new Date(tx.timestamp).toLocaleDateString("en-US", {
       month: "long",
       day: "numeric",
@@ -166,6 +167,7 @@ export const historyWorkflow = async (
           `send by ${userFrom?.phoneNumber}`
         }. \n`;
     }
-  });
+  }
+
   sendMessage(phoneNumber, historyMsg);
 };
