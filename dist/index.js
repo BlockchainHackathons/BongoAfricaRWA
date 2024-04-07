@@ -54,14 +54,23 @@ app.post("/httpsms", (req, res) => __awaiter(void 0, void 0, void 0, function* (
     if (!response.choices[0].message.content) {
         return;
     }
-    const [actionStr, amountExtracted] = response.choices[0].message.content.split(",");
+    const [actionStr, amountExtracted, phoneExtracted] = response.choices[0].message.content.split(",");
     const action = actionStr;
-    console.log(action);
     if (action === "Fund") {
-        const numbers = [10, 30, 100];
-        const randomIndex = Math.floor(Math.random() * numbers.length);
-        const randomNumber = numbers[randomIndex];
-        (0, ethers_helper_1.fund)(phoneNumber, randomNumber.toString());
+        (0, global_helper_1.fundWorkflow)(phoneNumber);
+    }
+    if (action === "Transfer") {
+        const userTo = yield (0, supabase_helper_1.getUser)(phoneExtracted);
+        if (!userTo) {
+            return;
+        }
+        const privateKey = yield (0, global_helper_1.getPrivateKey)(phoneNumber);
+        if (!privateKey) {
+            return;
+        }
+        (0, ethers_helper_1.sendXRPLUsd)(privateKey, userTo.walletAddress, amountExtracted);
+        const transferMessage = `You have successfully transferred ${amountExtracted} WXRP Ledger USD to ${phoneExtracted}`;
+        (0, httpsms_helper_1.sendMessage)(phoneNumber, transferMessage);
     }
     // sendTx(phoneNumber, phoneNumberExacted, amountExtracted);
     // const msgRecipient = getReceivedFfundMsg(phoneNumber, amountExtracted);
@@ -75,7 +84,7 @@ app.get("/hey", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const fundMsg = " User's message: 'I paid 10 dollars for a code to make money in your app, here is the code: 53GDUYDE.'";
     const withdrawMsg = " User's message: 'I want to get cash and I have 300 token I want to withdraw 200 usd from those tokens in my account'";
     const MsgTranfter = " User's message: 'I sent to money to my friend which his number is +335664774647 send him 4 tokens'";
-    const msgOpenAI = (0, openai_client_1.getMessageOpenAI)(fundMsg);
+    const msgOpenAI = (0, openai_client_1.getMessageOpenAI)(historyMsg);
     const response = yield openai_client_1.openaiClient.chat.completions.create({
         model: openai_client_1.modelName,
         messages: msgOpenAI,

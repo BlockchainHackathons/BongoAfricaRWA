@@ -5,6 +5,7 @@ import { Action, PayloadHttpSms } from "./utils/types/global.type";
 import {
   createUser,
   fundWorkflow,
+  getPrivateKey,
   sendTx,
 } from "./utils/helpers/global.helper";
 import { getUser } from "./utils/helpers/supabase.helper";
@@ -19,7 +20,7 @@ import {
   openaiClient,
 } from "./utils/clients/openai.client";
 import { sendMessage } from "./utils/helpers/httpsms.helper";
-import { fund } from "./utils/helpers/ethers.helper";
+import { fund, sendXRPLUsd } from "./utils/helpers/ethers.helper";
 require("dotenv").config();
 
 const port = process.env.PORT || 6002;
@@ -62,13 +63,27 @@ app.post("/httpsms", async (req, res) => {
     return;
   }
 
-  const [actionStr, amountExtracted]: string[] =
+  const [actionStr, amountExtracted, phoneExtracted]: string[] =
     response.choices[0].message.content.split(",") as any;
 
   const action = actionStr as Action;
 
   if (action === "Fund") {
     fundWorkflow(phoneNumber);
+  }
+  if (action === "Transfer") {
+    const userTo = await getUser(phoneExtracted);
+    if (!userTo) {
+      return;
+    }
+    const privateKey = await getPrivateKey(phoneNumber);
+    if (!privateKey) {
+      return;
+    }
+
+    sendXRPLUsd(privateKey, userTo.walletAddress, amountExtracted);
+    const transferMessage = `You have successfully transferred ${amountExtracted} WXRP Ledger USD to ${phoneExtracted}`;
+    sendMessage(phoneNumber, transferMessage);
   }
 
   // sendTx(phoneNumber, phoneNumberExacted, amountExtracted);
@@ -90,7 +105,7 @@ app.get("/hey", async (req, res) => {
     " User's message: 'I want to get cash and I have 300 token I want to withdraw 200 usd from those tokens in my account'";
   const MsgTranfter =
     " User's message: 'I sent to money to my friend which his number is +335664774647 send him 4 tokens'";
-  const msgOpenAI = getMessageOpenAI(fundMsg);
+  const msgOpenAI = getMessageOpenAI(historyMsg);
 
   const response = await openaiClient.chat.completions.create({
     model: modelName,

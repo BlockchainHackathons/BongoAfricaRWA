@@ -26,7 +26,7 @@ export const getMessageOpenAI = (messageUser: string) => {
     {
       role: "system",
       content:
-        "Based on the user's message, categorize the action by responding with only one word and strictly one word of the following terms: 'Fund', 'Transfer', 'History', 'Withdraw', or 'null'. Use 'null' if the message does not clearly fit any of the categories.",
+        "Analyze the user's message and categorize the intended action. Reply with a single word representing the action ('Fund', 'Transfer', 'History', 'Withdraw', or 'null') followed by a comma and the amount (if applicable) without any spaces followed by a comma and the phoneNumber (if applicable) without any spaces. Use 'null' if the action doesn't fit any categories. Expected Response Format: Action,Amount,PhoneNumber. Note: Your response should strictly be in the format specified with no additional explanations, summaries, or characters beyond the required format",
     },
     {
       role: "user",
