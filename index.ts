@@ -7,6 +7,7 @@ import {
   fundWorkflow,
   getPrivateKey,
   sendTx,
+  transferWorkflow,
 } from "./utils/helpers/global.helper";
 import { getUser } from "./utils/helpers/supabase.helper";
 import {
@@ -72,18 +73,7 @@ app.post("/httpsms", async (req, res) => {
     fundWorkflow(phoneNumber);
   }
   if (action === "Transfer") {
-    const userTo = await getUser(phoneExtracted);
-    if (!userTo) {
-      return;
-    }
-    const privateKey = await getPrivateKey(phoneNumber);
-    if (!privateKey) {
-      return;
-    }
-
-    sendXRPLUsd(privateKey, userTo.walletAddress, amountExtracted);
-    const transferMessage = `You have successfully transferred ${amountExtracted} WXRP Ledger USD to ${phoneExtracted}`;
-    sendMessage(phoneNumber, transferMessage);
+    transferWorkflow(phoneExtracted, phoneNumber, amountExtracted);
   }
 
   // sendTx(phoneNumber, phoneNumberExacted, amountExtracted);

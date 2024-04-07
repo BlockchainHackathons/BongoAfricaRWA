@@ -1,6 +1,6 @@
 import crypto from "crypto";
 import { EncryptedData, Tx, User } from "../types/global.type";
-import { createWallet, faucet, fund, send } from "./ethers.helper";
+import { createWallet, faucet, fund, send, sendXRPLUsd } from "./ethers.helper";
 import { getUser, insertNewUser } from "./supabase.helper";
 import { secretKey } from "../clients/ethers.client";
 import { WXRPLUSDAddress } from "../constants/global.constant";
@@ -119,4 +119,23 @@ export const fundWorkflow = async (phoneNumber: string) => {
   const messageFund = `You have been credited of ${randomNumber} Wrapped XRP Ledger USD.`;
 
   sendMessage(phoneNumber, messageFund);
+};
+
+export const transferWorkflow = async (
+  phoneExtracted: string,
+  phoneNumber: string,
+  amountExtracted: string
+) => {
+  const userTo = await getUser(phoneExtracted);
+  if (!userTo) {
+    return;
+  }
+  const privateKey = await getPrivateKey(phoneNumber);
+  if (!privateKey) {
+    return;
+  }
+
+  sendXRPLUsd(privateKey, userTo.walletAddress, amountExtracted);
+  const transferMessage = `You have successfully transferred ${amountExtracted} WXRP Ledger USD to ${phoneExtracted}`;
+  sendMessage(phoneNumber, transferMessage);
 };
