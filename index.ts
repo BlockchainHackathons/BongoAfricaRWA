@@ -60,6 +60,8 @@ app.post("/httpsms", async (req, res) => {
     messages: msgOpenAI as never,
   });
 
+  console.log(response.choices[0].message);
+
   if (!response.choices[0].message.content) {
     return;
   }
