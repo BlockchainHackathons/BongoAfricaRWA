@@ -171,10 +171,9 @@ export const historyWorkflow = async (
           `receive from ${userFrom?.phoneNumber}`
         }. \n`;
     }
-    historyMsg += `\nYour current balance is ${currentBalance.toFixed(
-      2
-    )} WXRP Ledger Usd 💸`;
   }
-
+  historyMsg += `\nYour current balance is ${currentBalance.toFixed(
+    2
+  )} WXRP Ledger Usd 💸`;
   sendMessage(phoneNumber, historyMsg);
 };
