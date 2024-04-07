@@ -47,4 +47,4 @@ export type Tx = {
   timestamp: string;
 };
 
-export type Action = "Fund" | "Transfer" | "History" | "Withdraw";
+export type Action = "Fund" | "Transfer" | "History" | "Withdraw" | null;

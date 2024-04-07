@@ -10,6 +10,7 @@ import {
   historyWorkflow,
   sendTx,
   transferWorkflow,
+  withdrawWorkflow,
 } from "./utils/helpers/global.helper";
 import { getUser } from "./utils/helpers/supabase.helper";
 import {
@@ -80,10 +81,33 @@ app.post("/httpsms", async (req, res) => {
     fundWorkflow(phoneNumber);
   }
   if (action === "Transfer") {
+    if (amountExtracted === null) {
+      const msgAmountExtractedLeft =
+        "We understood that you wanted to make a Transfer, but we were unable to identify the amount.";
+      sendMessage(phoneNumber, msgAmountExtractedLeft);
+    }
+    if (phoneNumber === null) {
+      const msgPhoneNumberExtractedLeft =
+        "We understood that you wanted to make a Transfer, but we were unable to identify the phone number.";
+      sendMessage(phoneNumber, msgPhoneNumberExtractedLeft);
+    }
     transferWorkflow(phoneExtracted, phoneNumber, amountExtracted);
   }
   if (action === "History") {
     historyWorkflow(phoneNumber, user.walletAddress);
+  }
+  if (action === "Withdraw") {
+    if (amountExtracted === null) {
+      const msgAmountExtractedLeft =
+        "We understood that you wanted to make a withdrawal, but we were unable to identify the amount.";
+      sendMessage(phoneNumber, msgAmountExtractedLeft);
+    }
+    withdrawWorkflow(phoneNumber, amountExtracted);
+  }
+  if (action === null) {
+    const noActionMsg =
+      "No action has been specified and identified in your previous message. Please rephrase your sentence.";
+    sendMessage(phoneNumber, noActionMsg);
   }
 
   // sendTx(phoneNumber, phoneNumberExacted, amountExtracted);
@@ -132,8 +156,6 @@ app.get("/hey", async (req, res) => {
 });
 app.listen(port, () => console.log("Server running on port 6002"));
 
-async function main() {
-  historyWorkflow("+33766399654", "0x4F5Aa3b4bD77717b34454E6A951c022C19232f7C");
-}
+async function main() {}
 
 main();
