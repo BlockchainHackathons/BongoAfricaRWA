@@ -46,3 +46,5 @@ export type Tx = {
   value: string;
   timestamp: string;
 };
+
+export type Action = "Fund" | "Transfer" | "History" | "Withdraw";

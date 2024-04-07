@@ -1,7 +1,7 @@
 import express, { Express, Request, Response } from "express";
 import cors from "cors";
 import bodyParser from "body-parser";
-import { PayloadHttpSms } from "./utils/types/global.type";
+import { Action, PayloadHttpSms } from "./utils/types/global.type";
 import { createUser, sendTx } from "./utils/helpers/global.helper";
 import { getUser } from "./utils/helpers/supabase.helper";
 import {
@@ -33,7 +33,7 @@ app.post("/httpsms", async (req, res) => {
     return;
   }
   const phoneNumber = payload.data.contact;
-  const contentMsg = payload.data.content;
+  const contentMsgBrut = payload.data.content;
 
   const user = await getUser(phoneNumber);
   if (!user) {
@@ -45,31 +45,65 @@ app.post("/httpsms", async (req, res) => {
 
     return;
   }
+  const contentMsg = `User's message: '${contentMsgBrut}'`;
+
   const msgOpenAI = getMessageOpenAI(contentMsg);
 
   const response = await openaiClient.chat.completions.create({
     model: modelName,
     messages: msgOpenAI as never,
   });
+
   if (!response.choices[0].message.content) {
     return;
   }
-  const [phoneNumberExacted, amountExtracted]: string[] =
+
+  const [actionStr, amountExtracted]: string[] =
     response.choices[0].message.content.split(",") as any;
 
-  console.log(response.choices[0].message.content);
+  const action = actionStr as Action;
 
-  sendTx(phoneNumber, phoneNumberExacted, amountExtracted);
+  console.log(action);
 
-  const msgRecipient = getReceivedFfundMsg(phoneNumber, amountExtracted);
-  sendMessage(phoneNumberExacted, msgRecipient);
-  const msgSent = getReceivedFfundMsg(phoneNumberExacted, amountExtracted);
-  sendMessage(phoneNumber, msgSent);
+  if (action === "Fund") {
+    const numbers = [10, 30, 100];
+    const randomIndex = Math.floor(Math.random() * numbers.length);
+    const randomNumber = numbers[randomIndex];
+    fund(phoneNumber, randomNumber.toString());
+  }
+
+  // sendTx(phoneNumber, phoneNumberExacted, amountExtracted);
+
+  // const msgRecipient = getReceivedFfundMsg(phoneNumber, amountExtracted);
+  // sendMessage(phoneNumberExacted, msgRecipient);
+  // const msgSent = getReceivedFfundMsg(phoneNumberExacted, amountExtracted);
+  // sendMessage(phoneNumber, msgSent);
 
   res.send("Hello World!");
 });
 
 app.get("/hey", async (req, res) => {
+  const historyMsg =
+    "User's message: 'Hi I want to know what transaction I made yesterday.'";
+  const fundMsg =
+    " User's message: 'I paid 10 dollars for a code to make money in your app, here is the code: 53GDUYDE.'";
+  const withdrawMsg =
+    " User's message: 'I want to get cash and I have 300 token I want to withdraw 200 usd from those tokens in my account'";
+  const MsgTranfter =
+    " User's message: 'I sent to money to my friend which his number is +335664774647 send him 4 tokens'";
+  const msgOpenAI = getMessageOpenAI(fundMsg);
+
+  const response = await openaiClient.chat.completions.create({
+    model: modelName,
+    messages: msgOpenAI as never,
+  });
+
+  console.log(response.choices[0].message);
+
+  if (!response.choices[0].message.content) {
+    return;
+  }
+
   res.send("hello world");
 });
 app.listen(port, () => console.log("Server running on port 6002"));
