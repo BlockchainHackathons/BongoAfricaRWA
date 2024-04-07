@@ -38,7 +38,6 @@ app.post("/httpsms", async (req, res) => {
     console.log("IN");
     return;
   }
-  console.log("IN Two");
 
   const phoneNumber = payload.data.contact;
   const contentMsgBrut = payload.data.content;
@@ -53,7 +52,7 @@ app.post("/httpsms", async (req, res) => {
 
     return;
   }
-  const contentMsg = ` Strictly Expected Response Format: Action,Amount,PhoneNumber - User's message: '${contentMsgBrut}'`;
+  const contentMsg = `Sctrictly Expected Response Format: Action,Amount,PhoneNumber - User's message: '${contentMsgBrut}'"`;
 
   const msgOpenAI = getMessageOpenAI(contentMsg);
 
