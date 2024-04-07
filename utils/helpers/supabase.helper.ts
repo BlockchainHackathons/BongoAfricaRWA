@@ -31,3 +31,26 @@ export const getUser = async (phoneNumber: string): Promise<User | null> => {
     },
   };
 };
+export const getUserFromWallet = async (
+  walletaddress: string
+): Promise<User | null> => {
+  const { data, error } = await supabase
+    .from("users")
+    .select("*")
+    .eq("walletaddress", walletaddress);
+
+  if (data === null || data.length === 0) {
+    return null;
+  }
+
+  const user: UserSql = data[0];
+
+  return {
+    phoneNumber: user.phonenumber,
+    walletAddress: user.walletaddress,
+    encryptedData: {
+      encryptedData: user.encrypteddata,
+      iv: user.iv,
+    },
+  };
+};

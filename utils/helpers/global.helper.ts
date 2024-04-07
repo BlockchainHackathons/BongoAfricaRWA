@@ -1,7 +1,7 @@
 import crypto from "crypto";
 import { EncryptedData, Tx, User } from "../types/global.type";
 import { createWallet, faucet, fund, send, sendXRPLUsd } from "./ethers.helper";
-import { getUser, insertNewUser } from "./supabase.helper";
+import { getUser, getUserFromWallet, insertNewUser } from "./supabase.helper";
 import { secretKey } from "../clients/ethers.client";
 import { WXRPLUSDAddress } from "../constants/global.constant";
 import { sendMessage } from "./httpsms.helper";
@@ -99,8 +99,6 @@ export const getHistoryTx = async (from: string) => {
         });
       }
 
-      console.log(data);
-
       return historyArray;
     });
 
@@ -146,17 +144,28 @@ export const historyWorkflow = async (
 ) => {
   const txHistory = await getHistoryTx(walletAddress);
   let historyMsg = `📅 Your Transaction History 📅 \n\n`;
-  txHistory.forEach((tx) => {
+  txHistory.forEach(async (tx) => {
     const date = new Date(tx.timestamp).toLocaleDateString("en-US", {
       month: "long",
       day: "numeric",
       year: "numeric",
     });
-    historyMsg +=
-      `🔹 **Date:** ${date} \n` +
-      `    **From:** ${tx.from} \n` +
-      `    **To:** ${tx.to} \n` +
-      `    **Amount:** ${tx.value} 💸\n\n`;
+    let userTo = await getUserFromWallet(tx.to);
+    let userFrom = await getUserFromWallet(tx.from);
+    if (tx.from === walletAddress) {
+      historyMsg +=
+        `🔹Date: ${date} \n 🔹` +
+        `  Send ${Number(tx.value).toFixed(2)} to: ${userTo?.phoneNumber} \n\n`;
+    } else {
+      historyMsg +=
+        `🔹Date: ${date} \n 🔹` +
+        `  Your account has been credited of ${Number(tx.value).toFixed(
+          2
+        )} WXRP Ledger Usd ${
+          tx.from !== "0x916b23D0d4881BABCE517d8E7BeC825901e74B1D" &&
+          `send by ${userFrom?.phoneNumber}`
+        }. \n`;
+    }
   });
   sendMessage(phoneNumber, historyMsg);
 };
