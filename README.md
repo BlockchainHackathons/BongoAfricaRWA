@@ -1,5 +1,3 @@
-# UniV3MagnifierIndexer
-
 # [Bongo](https://www.bongo.cash/) - Redefine Mobile Money.
 
 ## Powered by ![image](https://github.com/Magicred-1/BongoRWA/assets/86433099/5d039d56-17f6-468a-9bab-d6b208156694)
