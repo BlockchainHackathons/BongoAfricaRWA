@@ -8,7 +8,19 @@ At Bongo, we are redefining **Mobile Money** by providing a way transfer funds t
 
 ## DEMO
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/X1wFc1a9A38?si=lCkEnb2ckEEyqvX8" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+[![Watch the Video](image.png)](https://www.youtube.com/embed/X1wFc1a9A38?si=lCkEnb2ckEEyqvX8)
+
+### Demo Stack
+
+- [Mistral AI](https://mistral.ai/) - Automation and optimization platform for wind farms, utilizing machine learning for enhanced efficiency.
+
+- [HTTP SMS with Twilio](https://httpsms.com/) - Send and receive SMS messages over HTTP using Httpsms robust SMS API.
+
+- [Ethers.js](https://docs.ethers.io/v5/) - Ethereum blockchain interaction library, supporting wallet management, transactions, and smart contracts.
+
+- [Express](https://expressjs.com/) - Minimalist web framework for Node.js, ideal for building web applications and APIs efficiently.
+
+- [Supabase](https://supabase.com/) - Open-source Firebase alternative providing databases, auth, real-time subscriptions, and storage with RESTful and GraphQL APIs.
 
 ## Features
 
