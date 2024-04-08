@@ -28,26 +28,13 @@ At Bongo, we are redefining **Mobile Money** by providing a way transfer funds t
 
 - **Cost Efficient**: Bongo is a platform that makes Cross-Border Payments easy and cost efficient.
 
-# Preview
-
-The app is deployed on Vercel and can be accessed at [https://www.bongo.cash/](https://www.bongo.cash/)
-
-## Getting started
-
-Install dependencies
-
-```bash
-pnpm i
-```
-
-Copy `.env.example` to `.env.local` and set the environment variables
 
 ## Deployed Contracts on XRPL EVM Side Chain
 
 | CONTRACTS                              | ADDRESSES                                  |
 | -------------------------------------- | ------------------------------------------ |
 | Bongo Smart Wallet Contract (Treasury) | 0x49502A4f3705cb4F831343712be619898A8B528F |
-| Mockup Stablecoin                      | 0x41E79b67A978Da5f6Ecb67b40C5AAF45159f1D5f |
+| WXRPL USD Stablecoin                   | [0x41E79b67A978Da5f6Ecb67b40C5AAF45159f1D5f](https://evm-sidechain.xrpl.org/token/0x41E79b67A978Da5f6Ecb67b40C5AAF45159f1D5f) |
 | Bongo Cash Voucher Contract            | 0xb564d63Ecd9B42B740Aab49fea38daeDEd2Eb734 |
 
 ## Stack
